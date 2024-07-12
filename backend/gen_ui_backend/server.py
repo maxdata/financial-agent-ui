@@ -4,14 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from langserve import add_routes
 
-from .chat_types import ChatInputType
 from .chain import create_graph
-
-# Load environment variables from .env file
-load_dotenv()
+from .chat_types import ChatInputType
 
 
-def start() -> None:
+def start():
     app = FastAPI(
         title="Gen UI Backend",
         version="1.0",
@@ -19,10 +16,7 @@ def start() -> None:
     )
 
     # Configure CORS
-    origins = [
-        "http://localhost",
-        "http://localhost:3000",
-    ]
+    origins = ["*"]
 
     app.add_middleware(
         CORSMiddleware,
@@ -33,13 +27,10 @@ def start() -> None:
     )
 
     graph = create_graph()
-
     runnable = graph.with_types(input_type=ChatInputType, output_type=dict)
+    
+    add_routes(app, runnable, path="/chat", playground_type="default")
+    return app  # Return the app instead of running it
 
-    add_routes(app, runnable, path="/chat", playground_type="chat")
-    print("Starting server...")
-    uvicorn.run(app, host="0.0.0.0", port=3001)
-
-
-if __name__ == "__main__":
-    start()
+# Add this line at the end of the file
+app = start()

@@ -8,7 +8,7 @@ import { tools } from "@/agents/tools";
 import { systemPrompt } from "@/agents/system-prompt";
 
 const llm = new ChatOpenAI({
-  modelName: "gpt-4-turbo",
+  modelName: "gpt-3.5-turbo-1106",
   temperature: 0.1,
 });
 
